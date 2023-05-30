@@ -4,13 +4,12 @@ _mapObject = cursorObject;
 _idd = _mapObject getVariable ["DisplayIDD",""];
 if !((_mapObject isKindOf "Land_Map_blank_F") && !(_idd == "")) exitWith {};
 if ((player distance _mapObject) > 5) exitWith {};
-
 DrPhysMap_isMapInUpdate = true;
 _lastPos = _mapObject getVariable ["mapPosition", getPos _mapObject];
 _lastZoom = _mapObject getVariable ["mapZoom", 0.25];
 _display = findDisplay _idd;
-_mapCtrl = _display displayCtrl 1200;
 _offsetPos = linearConversion [0.25, 0.7, _lastZoom, 50, 300, true];
+_needToUpdate = true;
 switch (_key) do {
 	case 211: {
 		//north
@@ -35,13 +34,13 @@ switch (_key) do {
 	case 201: {
 		//zoom+
 		_lastZoom = _lastZoom - 0.05;
+		
 	};
+	default {_needToUpdate = false};
 };
-
-_mapCtrl ctrlMapAnimAdd [0, _lastZoom,_lastPos];
-ctrlMapAnimCommit _mapCtrl;
-UiSleep 0.1;
-displayUpdate _display;
-_mapObject setVariable ["mapPosition", _lastPos];
+if (!_needToUpdate) exitWith {DrPhysMap_isMapInUpdate = false};
+_mapObject setVariable ["mapPosition", _lastPos, true];
 _mapObject setVariable ["mapZoom", _lastZoom, true];
+[_idd,_lastZoom,_lastPos] remoteExec ["Dr_fnc_updateDisplay",0];
+UiSleep 0.05;
 DrPhysMap_isMapInUpdate = false;

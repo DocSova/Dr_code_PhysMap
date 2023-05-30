@@ -61,6 +61,7 @@ class CfgFunctions
             class placeMap {};
             class takeMap {};
             class controlMap {};
+            class updateDisplay {};
 		};
 	};
 };
